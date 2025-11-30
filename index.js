@@ -10,7 +10,8 @@ function getRandomDecimal(min, max, decimals = 2) {
   return (Math.random() * (max - min) + min).toFixed(decimals);
 }
 
-function extractCountryName(content) {
+function extractCountryName(content, filename) {
+  // First try to extract from JSON metadata in Hidezen files
   const lines = content.split('\n');
   for (let line of lines) {
     if (line.includes('"server":')) {
@@ -25,6 +26,12 @@ function extractCountryName(content) {
       }
     }
   }
+  
+  // If no JSON metadata found, try to extract from filename for vpnbook files
+  if (filename.includes('vpnbook-')) {
+    return 'Random';
+  }
+  
   return 'Unknown';
 }
 
@@ -82,7 +89,7 @@ function processOvpnFiles() {
       const filePath = path.join(inputDir, file);
       const content = fs.readFileSync(filePath, 'utf8');
           
-      const countryName = extractCountryName(content);
+      const countryName = extractCountryName(content, file);
       const countryShort = getCountryCode(countryName);
       const serverIP = extractServerIP(content);
           
