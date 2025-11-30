@@ -17,7 +17,8 @@ function extractCountryName(content) {
       try {
         const match = line.match(/"server":\s*"([^"]+)"/);
         if (match && match[1]) {
-          return match[1];
+          // Remove _tcp suffix if present
+          return match[1].replace(/_tcp$/, '');
         }
       } catch (e) {
         console.error('Error parsing server name:', e);
